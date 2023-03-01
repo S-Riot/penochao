@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% block title %}Index{% endblock %}
+{% block head %}
+  {{ super() }}
+  <style type="text/css">
+    /*additional css content*/
+  </style>
+{% endblock %}
+{% block content %}
+  <h1>Index</h1>
+  <p class="important">
+    Welcome on my awesome homepage.</p>
+    <h2>Welcome to FlaskApp!</h2>
+    <h3>{{ utc_dt }}</h3>
+{% endblock %}
