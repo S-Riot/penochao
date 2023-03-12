@@ -1,19 +1,29 @@
 import datetime
+import os
 from flask import Flask, render_template, request, flash, Markup, redirect, url_for
 from flask_login import LoginManager, login_required, current_user
 from markupsafe import escape
 from flask_wtf import FlaskForm, CSRFProtect
-from wtforms.validators import DataRequired, Length, Regexp
+from wtforms import Form, BooleanField, StringField, validators
 from wtforms.fields import *
 from flask_bootstrap import Bootstrap5, SwitchField
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import UserMixin
+from sqlalchemy.sql import func
+from sqlalchemy import create_engine,Column, Integer, String
+from sqlalchemy.orm import sessionmaker
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import render_template, redirect, url_for, request, flash
-from flask_login import login_user, logout_user, login_required
+from flask_login import UserMixin,login_user, logout_user, login_required
+# import the user model
+from models import db, User
+basedir = os.path.abspath(os.path.dirname(__file__))
 
+app = Flask(__name__)
+app.secret_key = '3d6f45a5fc12445dbac2f59c3b6c7cb1'
+
+# connecto to the local database
+app.config['SQLALCHEMY_DATABASE_URI'] ='sqlite:///' + os.path.join(basedir, 'penochao18237.SQLite')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
 
 # set default button sytle and size, will be overwritten by macro parameters
 app.config['BOOTSTRAP_BTN_STYLE'] = 'primary'
@@ -25,15 +35,50 @@ app.config['BOOTSTRAP_TABLE_EDIT_TITLE'] = 'Update'
 app.config['BOOTSTRAP_TABLE_DELETE_TITLE'] = 'Remove'
 app.config['BOOTSTRAP_TABLE_NEW_TITLE'] = 'Create'
 
+app.config['WTF_CSRF_ENABLED'] = True
+
 bootstrap = Bootstrap5(app)
-db = SQLAlchemy(app)
+
+db.init_app(app)
+
+# Create a database engine
+engine = db.create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
+conn = engine.connect()
 csrf = CSRFProtect(app)
-login_manager = LoginManager(app)  # Initialize the login manager
+
+login_manager = LoginManager()  # Initialize the login manager
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
+# Create a session factory
+Session = sessionmaker(bind=engine)
+session = Session()
+
+# classes declaration
+
+class LoginForm(FlaskForm):
+    username = StringField('username', validators=[validators.DataRequired(),validators.Length(min=4, max=20)])
+    password = PasswordField('password', validators=[validators.DataRequired(),validators.Length(min=6, max=255)])
+    remember = BooleanField('remember', validators=[])
+    submit = SubmitField('submit')
+    
+    
+class RegisterForm(FlaskForm):
+    username = StringField('username', validators=[validators.DataRequired(),validators.Length(min=4, max=20)])
+    password = PasswordField('password', validators=[validators.DataRequired(),validators.Length(min=6, max=255)])
+    firstname = StringField('firstname', validators=[validators.DataRequired(),validators.Length(min=2, max=255)])
+    lastname = StringField('lastname', validators=[validators.DataRequired(),validators.Length(min=2, max=255)])
+    email = EmailField('email', validators=[validators.DataRequired(), validators.Email()])
+    invalidCheck = BooleanField('invalidCheck', validators=[validators.DataRequired()])
+    submit = SubmitField('submit')
+
+# end of classes declaration
+
 
 @login_manager.user_loader
-def load_user(user_id):
+def load_user(id_user):
     # Load and return the user from the database based on user_id
-    return User.query.get(int(user_id))
+    return User.query.get(int(id_user))
 
 @app.route('/dashboard')
 @login_required
@@ -41,10 +86,10 @@ def dashboard():
     # Only logged-in users can access this route
     return render_template('dashboard.html', user=current_user)
 
+
 @app.route("/")
-@login_required
 def index():
-    return render_template('dasboard.html', utc_dt="2023-03-01")
+        return render_template('index.html', utc_dt="2023-03-01")
 
 @app.route("/sobre")
 @login_required
@@ -53,10 +98,13 @@ def sobre():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    form = LoginForm()
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        remember = request.form.get('remember')
+        if form.validate_on_submit():
+            # process the form data
+            username = form.username.data
+            password = form.password.data
+            remember = request.form.get('remember')
 
         user = User.query.filter_by(username=username).first()
 
@@ -64,6 +112,38 @@ def login():
             login_user(user, remember=remember)
             return redirect(url_for('dashboard'))
         else:
-            flash('Invalid username or password.')
+            flash('Invalid username or password.','danger')
 
-    return render_template('login.html')
+    return render_template('login.html', form=form)
+
+@app.route("/signup")
+def signup():
+        form = RegisterForm()
+        if request.method == 'POST':
+            if form.validate_on_submit():
+                # process the form data
+                username = form.username.data
+                password = form.password.data
+                firstname = form.firstname.data
+                lastname = form.lastname.data
+                email = form.email.data
+                invalidCheck = form.invalidCheck.data
+
+        registerUser = User.query.filter_by(username=username).first()
+
+        if user and user.check_password(password):
+            login_user(user, remember=remember)
+            return redirect(url_for('dashboard'))
+        else:
+            flash('Seu processo não foi completado. alguma coisa deu errado.','danger')
+        return render_template('signup.html')
+
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect("/")
+
+if __name__ == "__main__":
+    app.debug = True
+    app.run()

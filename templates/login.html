@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 
-{% block title %}Index{% endblock %}
+{% block title %}Login{% endblock %}
 {% block head %}
   {{ super() }}
   <style type="text/css">
@@ -8,22 +8,77 @@
   </style>
 {% endblock %}
 {% block content %}
+{% from 'bootstrap5/form.html' import render_field %}
 <div class="container">
     <div class="row">
       <div class="col-md-6 offset-md-3">
         <h2>Login</h2>
-        <form method="POST">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+        <form method="POST" novalidate class="needs-validation">
+          {{ form.csrf_token }}
           <div class="form-group">
-            <label for="username">Usuário</label>
-            <input type="text" class="form-control" id="username" name="username" placeholder="Enter username">
+            <div class="mb-3">
+              {{ render_field(form.username,placeholder="Digite seu usuário",class="form-control",id="username", label="Usuário") }}
+              <div class="invalid-feedback">
+                O campo usuário não pode ser vazio.
+              </div>
+            </div>
+
           </div>
           <div class="form-group">
-            <label for="password">Senha</label>
-            <input type="password" class="form-control" id="password" name="password" placeholder="Enter password">
+            <div class="mb-3">
+            {{ render_field(form.password,placeholder="Digite sua senha",class="form-control") }}
+            <div class="invalid-feedback">
+              O campo senha não pode ser vazio.
+            </div>
           </div>
-          <button type="submit" value="submit" class="btn btn-primary">Enviar</button>
+          <div class="form-group">
+            <div class="mb-3">
+            {{ render_field(form.remember,class="form-control", label='Lembrar meu nome de usuário e senha neste dispositivo.') }}
+          </div>
+          </div>
+          <div class="mb-3">
+            {{ render_field(form.submit, class="btn btn-primary",value="submit") }}
+        </div>
         </form>
       </div>
     </div>
+    <div class="row ">
+      <div class="col-md-6 offset-md-3 mb-3">
+        <p class="text-center">Esqueceu sua senha?<a href="/forgot" target="_self">clique aqui para recuperar</a></p>
+      </div>
+      <div class="col-md-6 offset-md-3 mb-3">
+        <p class="text-center">Não tem uma conta?<a href="/signup" target="_self">clique aqui para se registrar</a></p>
+      </div>
+    </div>
   </div>
+  <script type="text/javascript">
+    (() => {
+      'use strict'
+    
+      // Fetch all the forms we want to apply custom Bootstrap validation styles to
+      const forms = document.querySelectorAll('.needs-validation')
+    
+      // Loop over them and prevent submission
+      Array.from(forms).forEach(form => {
+        form.addEventListener('submit', event => {
+          if (!form.checkValidity()) {
+            event.preventDefault()
+            event.stopPropagation()
+          }
+    
+          form.classList.add('was-validated')
+        }, false)
+      })
+    })()
+  </script>
   {% endblock %}

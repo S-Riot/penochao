@@ -1,0 +1,102 @@
+{% extends "layout.html" %}
+
+{% block title %}Registrar{% endblock %}
+{% block head %}
+  {{ super() }}
+  <style type="text/css">
+    /*additional css content*/
+  </style>
+{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+      <div class="col-md-6 offset-md-3">
+        <h2>Registrar</h2>
+        <p>Use esta página para se registrar no nosso site. Preencha o formulário abaixo com seus dados. Os campos marcados com um * são de preenchimento obrigatório.</p>
+        <form method="POST" novalidate class="needs-validation">
+          <div class="form-group">
+            <div class="mb-3">
+              <label for="username" class="form-label">Escolha seu nome de usuario:</label>
+              <input type="text" class="form-control" id="username" name="username" placeholder="Ex.: carlosf33" required>
+              <div class="invalid-feedback">
+                Escolha um nome de usuario.
+              </div>
+        
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="mb-3">
+              <label for="firstname" class="form-label">Digite seu nome:</label>
+              <input type="text" class="form-control" id="firstname" name="firstname" placeholder="Ex.: Carlos" required>
+              <div class="invalid-feedback">
+                Digite seu nome (ou seus nomes) como no seu RG.
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <div class="mb-3">
+              <label for="lastname" class="form-label">Digite seu sobrenome:</label>
+              <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Ex.: Franco" required>
+              <div class="invalid-feedback">
+                Digite seu sobrenome (ou seus sobrenomes) como no seu RG.
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="mb-3">
+              <label for="email" class="form-label">Digite seu endereço de e-mail:</label>
+              <input type="text" class="form-control" id="email" name="email" placeholder="Ex.: franco.c@gmail.com" required>
+              <div class="invalid-feedback">
+              Digite seu endereço de e-mail pessoal.
+            </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="mb-3">
+            <label for="password" class="form-label">Senha</label>
+            <input type="password" class="form-control" id="password" name="password" placeholder="Enter password" required>
+            <div class="invalid-feedback">
+              Digite uma senha com letras e numeros que seja facil para você se lembrar.
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="mb-3">
+              <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required>
+              <label class="form-check-label" for="invalidCheck">
+                Ao enviar este formulário eu estou ciente que aceito os <a>termos de serviço</a> e a <a>politica de privacidade</a>.
+              </label>
+              <div class="invalid-feedback">
+                Você tem que marcar esta caixa dando o seu consenso para o tratamento de dados, politica de privacidade e termos de serviço do aplicativo/site. 
+              </div>
+        
+          </div>
+          </div>
+          <div class="mb-3">
+          <button type="submit" value="submit" class="btn btn-primary">Registrar</button>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript">
+    (() => {
+      'use strict'
+    
+      // Fetch all the forms we want to apply custom Bootstrap validation styles to
+      const forms = document.querySelectorAll('.needs-validation')
+    
+      // Loop over them and prevent submission
+      Array.from(forms).forEach(form => {
+        form.addEventListener('submit', event => {
+          if (!form.checkValidity()) {
+            event.preventDefault()
+            event.stopPropagation()
+          }
+    
+          form.classList.add('was-validated')
+        }, false)
+      })
+    })()
+  </script>
+  {% endblock %}
