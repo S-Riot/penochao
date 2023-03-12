@@ -1,4 +1,6 @@
+# importing datetime module
 import datetime
+import time
 import os
 from flask import Flask, render_template, request, flash, Markup, redirect, url_for
 from flask_login import LoginManager, login_required, current_user
@@ -63,7 +65,7 @@ class LoginForm(FlaskForm):
     submit = SubmitField('submit')
     
     
-class RegisterForm(FlaskForm):
+class SignupForm(FlaskForm):
     username = StringField('username', validators=[validators.DataRequired(),validators.Length(min=4, max=20)])
     password = PasswordField('password', validators=[validators.DataRequired(),validators.Length(min=6, max=255)])
     firstname = StringField('firstname', validators=[validators.DataRequired(),validators.Length(min=2, max=255)])
@@ -118,25 +120,27 @@ def login():
 
 @app.route("/signup")
 def signup():
-        form = RegisterForm()
-        if request.method == 'POST':
-            if form.validate_on_submit():
-                # process the form data
-                username = form.username.data
-                password = form.password.data
-                firstname = form.firstname.data
-                lastname = form.lastname.data
-                email = form.email.data
-                invalidCheck = form.invalidCheck.data
-
-        registerUser = User.query.filter_by(username=username).first()
-
-        if user and user.check_password(password):
-            login_user(user, remember=remember)
-            return redirect(url_for('dashboard'))
-        else:
-            flash('Seu processo não foi completado. alguma coisa deu errado.','danger')
-        return render_template('signup.html')
+        form = SignupForm()
+        if form.validate_on_submit():
+            user = User.query.filter_by(username=form.username.data).first()
+            if user is not None:
+                flash('That username is already taken. Please choose a different one.')
+                return redirect(url_for('signup'))
+            user = User.query.filter_by(email=form.email.data).first()
+            if user is not None:
+                flash('That email is already taken. Please choose a different one.')
+                return redirect(url_for('signup'))
+            curr_dt = datetime.now()
+            datecreated = int(round(curr_dt.timestamp())) # this moment in time.
+            userlevel = 0 # to-do: change status later, 0 must be full admin
+            accountstatus = 1 # status available, the user can login and do whatever             
+            password_hash = generate_password_hash(form.password.data)
+            user = User(username=form.username.data, email=form.email.data, password_hash=password_hash)
+            db.session.add(user)
+            db.session.commit()
+            flash('Congratulations, you are now a registered user!')
+            return redirect(url_for('index'))
+        return render_template('signup.html', form=form)
 
 @app.route("/logout")
 @login_required
