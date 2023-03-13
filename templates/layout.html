@@ -23,7 +23,7 @@
         <!-- navigation -->
         <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
             <div class="container-fluid">
-              <a class="navbar-brand" href="#">Pe No Chao</a>
+              <a class="navbar-brand" href="/">Pe No Chao</a>
               <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
               </button>
@@ -31,7 +31,12 @@
           
                     <div class="navbar-nav mr-auto">
                         {{ render_nav_item('index', 'Home') }}
+                        {% if current_user.is_authenticated %}
+                        {{ render_nav_item('services', 'Serviços') }}
+                        {{ render_nav_item('profile', 'Meu perfil') }}
+                        {% endif %}
                         {{ render_nav_item('sobre', 'Sobre') }}
+                        
                     </div>
                 </div>
                 <form class="d-flex" role="login">

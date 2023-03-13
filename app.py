@@ -95,8 +95,17 @@ def index():
         return render_template('index.html', utc_dt="2023-03-01")
 
 @app.route("/sobre")
-@login_required
 def sobre():
+    return render_template('sobre.html', utc_dt="2023-03-01")
+
+@app.route("/services")
+@login_required
+def services():
+    return render_template('sobre.html', utc_dt="2023-03-01")
+
+@app.route("/profile")
+@login_required
+def profile():
     return render_template('sobre.html', utc_dt="2023-03-01")
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -113,7 +122,12 @@ def login():
 
         if user and user.check_password(password):
             login_user(user, remember=remember)
-            return redirect(url_for('dashboard'))
+            #update the last login on the database
+            curr_dt = datetime.now()
+            lastlogin = int(round(curr_dt.timestamp()))
+            user.lastlogin = lastlogin
+            db.session.commit()
+            return redirect(url_for('dashboard',user=user))
         else:
             flash('Invalid username or password.','danger')
 
@@ -133,7 +147,7 @@ def signup():
                 flash('That email is already taken. Please choose a different one.')
                 return redirect(url_for('signup'))
             datecreated = int(round(curr_dt.timestamp())) # this moment in time.
-            userlevel = 0 # to-do: change status later, 0 must be full admin
+            userlevel = 10 # to-do: change status later, 0 must be full admin
             accountstatus = 1 # status available, the user can login and do whatever             
             password_hash = generate_password_hash(form.password.data)
             user = User(username=form.username.data, email=form.email.data, password=password_hash,firstname = form.firstname.data, lastname = form.lastname.data, datecreated = datecreated, userlevel=userlevel,accountstatus = accountstatus)
@@ -147,7 +161,14 @@ def signup():
 @login_required
 def logout():
     logout_user()
+    session.close()
     return redirect("/")
+
+# jinja template filters
+
+@app.template_filter('date')
+def format_datetime(value, format='%Y-%m-%d %H:%M:%S'):
+    return datetime.fromtimestamp(value).strftime(format)
 
 if __name__ == "__main__":
     app.debug = True

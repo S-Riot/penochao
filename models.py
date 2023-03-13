@@ -32,4 +32,4 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password, password)
 
     def get_id(self):
-        return str(self.id)
+        return str(self.id_user)
