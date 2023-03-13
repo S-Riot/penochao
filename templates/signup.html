@@ -8,16 +8,29 @@
   </style>
 {% endblock %}
 {% block content %}
+{% from 'bootstrap5/form.html' import render_field %}
 <div class="container">
     <div class="row">
       <div class="col-md-6 offset-md-3">
         <h2>Registrar</h2>
+        
         <p>Use esta página para se registrar no nosso site. Preencha o formulário abaixo com seus dados. Os campos marcados com um * são de preenchimento obrigatório.</p>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
         <form method="POST" novalidate class="needs-validation">
+          {{ form.csrf_token }}
           <div class="form-group">
             <div class="mb-3">
               <label for="username" class="form-label">Escolha seu nome de usuario:</label>
-              <input type="text" class="form-control" id="username" name="username" placeholder="Ex.: carlosf33" required>
+              {{ render_field(form.username,placeholder="Ex.: carlosf33",class="form-control",id="username", label="Usuário") }}
               <div class="invalid-feedback">
                 Escolha um nome de usuario.
               </div>
@@ -27,7 +40,7 @@
           <div class="form-group">
             <div class="mb-3">
               <label for="firstname" class="form-label">Digite seu nome:</label>
-              <input type="text" class="form-control" id="firstname" name="firstname" placeholder="Ex.: Carlos" required>
+              {{ render_field(form.firstname,placeholder="Ex.: Carlos",class="form-control",id="firstname", label="Usuário") }}
               <div class="invalid-feedback">
                 Digite seu nome (ou seus nomes) como no seu RG.
               </div>
@@ -37,7 +50,7 @@
           <div class="form-group">
             <div class="mb-3">
               <label for="lastname" class="form-label">Digite seu sobrenome:</label>
-              <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Ex.: Franco" required>
+              {{ render_field(form.lastname,placeholder="Ex.: Franco",class="form-control",id="lastname", label="Usuário") }}
               <div class="invalid-feedback">
                 Digite seu sobrenome (ou seus sobrenomes) como no seu RG.
               </div>
@@ -46,7 +59,7 @@
           <div class="form-group">
             <div class="mb-3">
               <label for="email" class="form-label">Digite seu endereço de e-mail:</label>
-              <input type="text" class="form-control" id="email" name="email" placeholder="Ex.: franco.c@gmail.com" required>
+              {{ render_field(form.email,placeholder="Ex.: franco.c@gmail.com",class="form-control",id="email", label="Usuário") }}
               <div class="invalid-feedback">
               Digite seu endereço de e-mail pessoal.
             </div>
@@ -55,14 +68,14 @@
           <div class="form-group">
             <div class="mb-3">
             <label for="password" class="form-label">Senha</label>
-            <input type="password" class="form-control" id="password" name="password" placeholder="Enter password" required>
+            {{ render_field(form.password,placeholder="Digite uma senha",class="form-control",id="password", label="Usuário") }}
             <div class="invalid-feedback">
               Digite uma senha com letras e numeros que seja facil para você se lembrar.
             </div>
           </div>
           <div class="form-group">
             <div class="mb-3">
-              <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required>
+              {{ render_field(form.invalidCheck,class="form-control", label='Lembrar meu nome de usuário e senha neste dispositivo.') }}
               <label class="form-check-label" for="invalidCheck">
                 Ao enviar este formulário eu estou ciente que aceito os <a>termos de serviço</a> e a <a>politica de privacidade</a>.
               </label>
@@ -73,7 +86,7 @@
           </div>
           </div>
           <div class="mb-3">
-          <button type="submit" value="submit" class="btn btn-primary">Registrar</button>
+            {{ render_field(form.submit, class="btn btn-primary",value="submit") }}
         </div>
         </form>
       </div>

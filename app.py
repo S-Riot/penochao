@@ -118,8 +118,9 @@ def login():
 
     return render_template('login.html', form=form)
 
-@app.route("/signup")
+@app.route("/signup", methods=['GET', 'POST'])
 def signup():
+        curr_dt = datetime.now()
         form = SignupForm()
         if form.validate_on_submit():
             user = User.query.filter_by(username=form.username.data).first()
@@ -130,12 +131,11 @@ def signup():
             if user is not None:
                 flash('That email is already taken. Please choose a different one.')
                 return redirect(url_for('signup'))
-            curr_dt = datetime.now()
             datecreated = int(round(curr_dt.timestamp())) # this moment in time.
             userlevel = 0 # to-do: change status later, 0 must be full admin
             accountstatus = 1 # status available, the user can login and do whatever             
             password_hash = generate_password_hash(form.password.data)
-            user = User(username=form.username.data, email=form.email.data, password_hash=password_hash)
+            user = User(username=form.username.data, email=form.email.data, password=password_hash,firstname = form.firstname.data, lastname = form.lastname.data, datecreated = datecreated, userlevel=userlevel,accountstatus = accountstatus)
             db.session.add(user)
             db.session.commit()
             flash('Congratulations, you are now a registered user!')
