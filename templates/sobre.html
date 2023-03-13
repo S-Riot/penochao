@@ -1,30 +1,57 @@
-{% extends "layout.html" %}
-{% block title %}Index{% endblock %}
-{% block head %}
-  {{ super() }}
-  <style type="text/css">
-    /*additional css content*/
-  </style>
-{% endblock %}
-{% block content %}
+{% extends "layout.html" %} {% block title %}Index{% endblock %} {% block head
+%} {{ super() }}
+<style type="text/css">
+  p {
+    text-align: justify;
+  }
+
+  strong {
+    font-weight: bold;
+  }
+</style>
+{% endblock %} {% block content %}
 <div class="page-header" id="banner">
-    <div class="row">
-      <div class="col-lg-8 col-md-7 col-sm-6">
-        <h1>Sobre</h1>
-        <p class="lead">Ubuntu orange and unique font</p>
-      </div>
-      <div class="col-lg-4 col-md-5 col-sm-6">
-        <div class="sponsor">
-            <article>
-                <header>
-                    <h2>Article title</h2>
-                    <p>Posted on <time datetime="2009-09-04T16:31:24+02:00">September 4th 2009</time> by <a href="#">Writer</a> - <a href="#comments">6 comments</a></p>
-                </header>
-                <p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.</p>
-            </article>
-        </div>
-      </div>
+  <div class="row">
+    <div class="col-lg-8 col-md-7 col-sm-6">
+      <article>
+        <header>
+          <h1>Quem somos</h1>
+        </header>
+        <section>
+        <p>
+          O <strong>Portal "Pé no Chão"</strong> é uma plataforma online
+          gratuita que nasceu com o objetivo de ajudar os descendentes de
+          italianos a alcançarem o reconhecimento de sua
+          <strong>cidadania</strong> de forma mais fácil e acessível. Para isso,
+          reunimos em um único ambiente uma ampla variedade de informações,
+          modelos, sites de <strong>pesquisa</strong>, arquivos, links,
+          legislação, além de <strong>serviços</strong> como a busca e obtenção
+          de <strong>documentos</strong> e tradução para o italiano.
+        </p>
+
+        <p>
+          Todo o material disponível em nosso portal é organizado em seções
+          específicas, de modo a facilitar o acesso e a
+          <strong>pesquisa</strong>, e assim contribuir de maneira efetiva para
+          o processo de reconhecimento da <strong>cidadania</strong> e busca por
+          <strong>documentos</strong>.
+        </p>
+
+        <p>
+          Nosso objetivo é fornecer todo o suporte necessário para que nossos
+          usuários possam obter sucesso em seus processos de reconhecimento de
+          <strong>cidadania</strong>. Por isso, caso não encontre o que procura
+          em nossa plataforma, por favor, não hesite em contatar-nos. Estaremos
+          prontos para ajudá-lo a encontrar a solução ideal para suas
+          necessidades.
+        </p>
+      </section>
+      </article>
+    </div>
+    <div class="col-lg-4 col-md-5 col-sm-6">
+      <div class="sponsor"></div>
     </div>
   </div>
-    <small>{{ utc_dt }}</small>
+</div>
+<small>{{ utc_dt }}</small>
 {% endblock %}
